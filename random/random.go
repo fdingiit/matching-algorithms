@@ -4,28 +4,27 @@ import (
 	"math/rand"
 	"time"
 
-	mapset "github.com/deckarep/golang-set"
 	uuid "github.com/satori/go.uuid"
 
 	"github.com/fdingiit/matching-algorithms/def"
 )
 
 var fruits = []interface{}{
-	nil,
+	def.FruitAll,
 	def.Apple,
 	def.Grape,
 	def.Watermelon,
 }
 
 var colors = []interface{}{
-	nil,
+	def.ColorAll,
 	def.Red,
 	def.Green,
 	def.Purple,
 }
 
 var cities = []interface{}{
-	nil,
+	def.CityAll,
 	def.Beijing,
 	def.Shanghai,
 	def.Guangzhou,
@@ -50,27 +49,12 @@ func choiceOneNotNil(items []interface{}) interface{} {
 	}
 }
 
-func choice(items []interface{}) mapset.Set {
+func choice(items []interface{}) interface{} {
 	rand.Seed(time.Now().UnixNano())
-
-	cnt := rand.Int() % len(items)
-	if cnt == 0 {
-		return nil
-	}
-
-	var set = mapset.NewSet()
-
-	for set.Cardinality() != cnt {
-		rand.Seed(time.Now().UnixNano())
-
-		item := items[rand.Int()%len(items)]
-		set.Add(item)
-	}
-
-	return set
+	return items[rand.Int()%len(items)]
 }
 
-func randWeight(n uint) *def.Weight {
+func randWeight(n uint) def.Weight {
 	rand.Seed(time.Now().UnixNano())
 
 	for {
@@ -78,7 +62,7 @@ func randWeight(n uint) *def.Weight {
 		if try > n {
 			var w def.Weight
 			w = def.Weight(try)
-			return &w
+			return w
 		}
 	}
 }
@@ -87,11 +71,11 @@ func randSub() def.Subscription {
 	var sub def.Subscription
 
 	sub.Id = uuid.NewV4().String()
-	sub.Fruits = choice(fruits)
-	sub.Colors = choice(colors)
-	sub.Cities = choice(cities)
+	sub.Fruit = choice(fruits).(def.Fruit)
+	sub.Color = choice(colors).(def.Color)
+	sub.City = choice(cities).(def.City)
 	sub.WeightBottom = randWeight(0)
-	sub.WeightFloor = randWeight(uint(*sub.WeightBottom))
+	sub.WeightFloor = randWeight(uint(sub.WeightBottom))
 
 	return sub
 }
@@ -133,7 +117,7 @@ func RandProduct() def.Product {
 	product.Fruit = choiceOneNotNil(fruits).(def.Fruit)
 	product.Color = choiceOneNotNil(colors).(def.Color)
 	product.City = choiceOneNotNil(cities).(def.City)
-	product.Weight = *randWeight(0)
+	product.Weight = randWeight(0)
 
 	return product
 }

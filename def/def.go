@@ -2,19 +2,19 @@ package def
 
 import (
 	"fmt"
-
-	mapset "github.com/deckarep/golang-set"
 )
 
 type Fruit int
 
 const (
-	Apple Fruit = iota
+	FruitAll Fruit = iota
+	Apple
 	Grape
 	Watermelon
 )
 
 var fruitString = map[Fruit]string{
+	FruitAll:   "$all",
 	Apple:      "$apple",
 	Grape:      "$grape",
 	Watermelon: "$watermelon",
@@ -27,15 +27,17 @@ func (f Fruit) String() string {
 type Color int
 
 const (
-	Red Color = iota
+	ColorAll Color = iota
+	Red
 	Green
 	Purple
 )
 
 var colorString = map[Color]string{
-	Red:    "$red",
-	Green:  "$green",
-	Purple: "$purple",
+	ColorAll: "$all",
+	Red:      "$red",
+	Green:    "$green",
+	Purple:   "$purple",
 }
 
 func (c Color) String() string {
@@ -45,12 +47,14 @@ func (c Color) String() string {
 type City int
 
 const (
-	Beijing City = iota
+	CityAll City = iota
+	Beijing
 	Shanghai
 	Guangzhou
 )
 
 var cityString = map[City]string{
+	CityAll:   "$all",
 	Beijing:   "$beijing",
 	Shanghai:  "$shanghai",
 	Guangzhou: "$guangzhou",
@@ -62,17 +66,22 @@ func (c City) String() string {
 
 type Weight uint
 
+const (
+	WeightMin Weight = 0
+	WeightMax Weight = 2<<32 - 1
+)
+
 func (w Weight) String() string {
 	return fmt.Sprintf("$weight=%d", w)
 }
 
 type Subscription struct {
-	Id           string
-	Fruits       mapset.Set
-	Colors       mapset.Set
-	Cities       mapset.Set
-	WeightBottom *Weight
-	WeightFloor  *Weight
+	Id string
+	Fruit
+	Color
+	City
+	WeightBottom Weight
+	WeightFloor  Weight
 }
 
 type Product struct {
